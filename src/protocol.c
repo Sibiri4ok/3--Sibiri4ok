@@ -76,11 +76,15 @@ int read_message(FILE *stream, void *buf) {
         return EOF;
     }
     int start = 0;
-    for (start; start < MAX_LEN_MESSAGE; ++ start) {
-        if ( ((uint8_t)buf+start) == NULL)
-            break;
-        countBit += 8;
+    if (buf != NULL) { //read_twice check
+        for (start; start < MAX_LEN_MESSAGE; ++ start) {
+            if (((*(((uint8_t *)buf)+start)) <= 0xFF) && ((*(((uint8_t *)buf)+start)) >= 0x00))
+                start++;
+            else
+                break;
+        }
     }
+    
     for (int i = start; i < MAX_LEN_MESSAGE; ++ i) {
         if (buffer[i])  {
             *(((uint8_t *)buf)+i) = buffer[i];
