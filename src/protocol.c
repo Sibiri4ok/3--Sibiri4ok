@@ -9,7 +9,7 @@ int read_message(FILE *stream, void *buf) {
     int byte;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         byte = getc(stream);
-        printf("%d", byte);
+        printf("%d ", byte);
         if (byte==-1) break;
         result[i] = (uint8_t)byte;
         mSize ++;
@@ -71,7 +71,6 @@ int read_message(FILE *stream, void *buf) {
         }
     }
     countBit --;
-    printf("%d", countBit);
     if ( (countBit % 8) != 0 )  {
         fprintf(stderr, "The byte is not whole");
         return EOF;
