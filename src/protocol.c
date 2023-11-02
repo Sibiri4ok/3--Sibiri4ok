@@ -9,6 +9,7 @@ int read_message(FILE *stream, void *buf) {
     int byte;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         byte = getc(stream);
+        printf("%d", byte);
         if (byte==-1) break;
         result[i] = (uint8_t)byte;
         mSize ++;
@@ -76,14 +77,6 @@ int read_message(FILE *stream, void *buf) {
         return EOF;
     }
     int start = 0;
-    if (buf != NULL) { //read_twice check
-        for (start; start < MAX_LEN_MESSAGE; ++ start) {
-            if (((*(((uint8_t *)buf)+start)) <= 0xFF) && ((*(((uint8_t *)buf)+start)) >= 0x00))
-                start++;
-            else
-                break;
-        }
-    }
     
     for (int i = start; i < MAX_LEN_MESSAGE; ++ i) {
         if (buffer[i])  {
