@@ -78,7 +78,7 @@ int read_message(FILE *stream, void *buf) {
     
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         if (buffer[i])  {
-            *(((uint8_t *)buf)) = buffer[i];
+            *((uint8_t *)(buf)) = buffer[i];
             buf ++;
         }
     }
