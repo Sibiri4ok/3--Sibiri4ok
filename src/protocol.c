@@ -3,13 +3,13 @@
 #include <stdint.h>
 #define MAX_LEN_MESSAGE 256
 
+
 int read_message(FILE *stream, void *buf) {
     int mSize = 0;
     uint8_t result[MAX_LEN_MESSAGE];
     int byte;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         byte = getc(stream);
-        printf("%d ", byte);
         if (byte==-1) break;
         result[i] = (uint8_t)byte;
         mSize ++;
@@ -75,11 +75,10 @@ int read_message(FILE *stream, void *buf) {
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
-    
+    uint8_t *uinBuf = (uint8_t*)buf;;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         if (buffer[i])  {
-            *((uint8_t *)(buf)) = buffer[i];
-            buf ++;
+            uinBuf[i] = buffer[i];
         }
     }
     return countBit/8;
