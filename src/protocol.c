@@ -75,8 +75,17 @@ int read_message(FILE *stream, void *buf) {
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
+    int bufStart = 0;
     uint8_t *uinBuf = (uint8_t*)buf;;
-    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
+    if (uinBuf!=NULL) {
+        for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
+            if (uinBuf[i]==0) {
+                bufStart = i;
+                break
+            }
+        }
+    }
+    for (int i = bufStart; i < MAX_LEN_MESSAGE; ++ i) {
         uinBuf[i] = buffer[i];
     }
     return countBit/8;
