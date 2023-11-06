@@ -81,7 +81,7 @@ int read_message(FILE *stream, void *buf) {
         for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
             if (uinBuf[i]==0) {
                 bufStart = i;
-                break
+                break;
             }
         }
     }
