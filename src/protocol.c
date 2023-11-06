@@ -77,9 +77,7 @@ int read_message(FILE *stream, void *buf) {
     }
     uint8_t *uinBuf = (uint8_t*)buf;;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
-        if (buffer[i])  {
-            uinBuf[i] = buffer[i];
-        }
+        uinBuf[i] = buffer[i];
     }
     return countBit/8;
 }
