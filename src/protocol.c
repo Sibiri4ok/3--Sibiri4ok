@@ -14,8 +14,8 @@ int read_message(FILE *stream, void *buf) {
         result[i] = (uint8_t)byte;
         mSize ++;
     }
-    int end_index;
-    int start_index;
+    int end_index = 0;
+    int start_index = 0;
     int array_numbers[] = {128,64,32,16,8,4,2,1};
     int countBite1 = 0;
     uint8_t find_end_marker = 0x00;
@@ -44,7 +44,7 @@ int read_message(FILE *stream, void *buf) {
     for (int i = start_index; i < 2048; ++i) {
         find_end_marker = find_end_marker | ((result[i/8] & array_numbers[i%8])>0);
         if (find_end_marker == 0x7E) { 
-            find_end_marker =  find_end_marker << 8;
+            find_end_marker =  0x00;
             end_index = (end_index==0) ? i-8-1 : end_index;
             count_end_marker++;
         }
@@ -55,7 +55,7 @@ int read_message(FILE *stream, void *buf) {
         uint16_t pair = (uint16_t)(result[mSize-2]<<8) | (uint16_t)(result[mSize-1]);
         for (int i = 0; i < 8; ++ i) { // прверяем последний 
             if ((uint8_t)(pair>>i) == 0x7E) {
-                end_index = mSize*8 - i - 8 - 1;
+                end_index = mSize*8 - i - 8;
                 break;
             }
         countReverseMarker++;
