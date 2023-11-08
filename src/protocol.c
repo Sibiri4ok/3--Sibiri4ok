@@ -94,7 +94,7 @@ int read_message(FILE *stream, void *buf) {
         }
     }
     countBit --;
-    printf("countBit=%d\n",count_bit);
+    printf("countBit=%d\n",countBit);
     /*if ( (countBit % 8) != 0 )  {
         puts("94");
         fprintf(stderr, "The byte is not whole");
