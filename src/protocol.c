@@ -45,11 +45,12 @@ int read_message(FILE *stream, void *buf) {
         find_end_marker = find_end_marker | ((result[i/8] & array_numbers[i%8])>0);
         if (find_end_marker == 0x7E) { 
             find_end_marker =  find_end_marker << 8;
-            end_index = (end_index==0) ? i-8 : end_index;
+            end_index = (end_index==0) ? i-8-1 : end_index;
             count_end_marker++;
         }
         find_end_marker = find_end_marker << 1;
     }
+    printf("end_index = %d\n", end_index);
     if (count_end_marker == 1) {
         uint16_t pair = (uint16_t)(result[mSize-2]<<8) | (uint16_t)(result[mSize-1]);
         for (int i = 0; i < 8; ++ i) { // прверяем последний 
@@ -65,6 +66,7 @@ int read_message(FILE *stream, void *buf) {
             return EOF;
         }
     }
+    printf("end_index = %d\n", end_index);
 
 
     int countBit = 0;
@@ -89,7 +91,6 @@ int read_message(FILE *stream, void *buf) {
             countBite1 = 0;
         }
     }
-    countBit --;
     if ( (countBit % 8) != 0 )  {
         puts("94");
         fprintf(stderr, "The byte is not whole");
