@@ -5,8 +5,8 @@
 
 
 int read_message(FILE *stream, void *buf) {
-    int mSize = 0;
-    uint8_t result[MAX_LEN_MESSAGE];
+    int mSize = 0; // длина прочитываемого сообщения
+    uint8_t result[MAX_LEN_MESSAGE]; // массив, в который записыаем прочитываемое сообщение
     int byte;
     for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         byte = getc(stream);
@@ -18,12 +18,13 @@ int read_message(FILE *stream, void *buf) {
     int start_index;
     int array_numbers[] = {128,64,32,16,8,4,2,1};
     int countBite1 = 0;
-    uint16_t pair = (uint16_t)(result[mSize-2]<<8) | (uint16_t)(result[mSize-1]);
+    uint8_t find_end_marker = 0x00;
+    
     uint16_t pair_start = (uint16_t)(result[0]<<8) | (uint16_t)(result[1]);
     int countReverseMarker = 0;
     int countStartReverseMarker = 0;
     
-    for (int i = 0; i < 8; ++ i) { // прверяем последний 
+    /*for (int i = 0; i < 8; ++ i) { // прверяем последний 
         if ((uint8_t)(pair>>i) == 0x7E) {
             end_index = mSize*8 - i - 8;
             break;
@@ -33,8 +34,8 @@ int read_message(FILE *stream, void *buf) {
     if (countReverseMarker == 8) {
         fprintf(stderr, "Error, end-marker is not there");
         return EOF;
-    }
-    for (int i = 0; i < 2048; ++ i) {
+    }*/
+    for (int i = 0; i < 2048; ++ i) { // проверка стартового маркера
         if (countStartReverseMarker%8==0) {
             pair_start = (uint16_t)(result[i/8]<<8) | (uint16_t)(result[(i/8)+1]);
         }
@@ -49,10 +50,35 @@ int read_message(FILE *stream, void *buf) {
         pair_start = pair_start << 1;
         countStartReverseMarker++;
     }
-    int countBit = 0;
-    uint8_t buffer[MAX_LEN_MESSAGE];
+    for (int i = start_index; i < 2048; ++i) {
+        find_end_marker = find_end_marker | ((result[i/8] & array_numbers[i%8])>0);
+        if (find_end_marker == 0x7E) { 
+            find_end_marker << 8;
+            end_index = (end_index==0) ? i-8 : end_index;
+            count_end_marker++;
+        }
+        find_end_marker = find_end_marker << 1;
+    }
+    if (count_end_marker == 1) {
+        uint16_t pair = (uint16_t)(result[mSize-2]<<8) | (uint16_t)(result[mSize-1]);
+        for (int i = 0; i < 8; ++ i) { // прверяем последний 
+            if ((uint8_t)(pair>>i) == 0x7E) {
+                end_index = mSize*8 - i - 8 - 1;
+                break;
+            }
+        countReverseMarker++;
+        }   
+        if (countReverseMarker == 8) {
+            fprintf(stderr, "Error, end-marker is not there");
+            return EOF;
+        }
+    }
 
-    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) buffer[i] = 0x00;
+
+    int countBit = 0;
+    uint8_t buffer[MAX_LEN_MESSAGE]; // массив в который записываем декодированное сообщение
+
+    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) buffer[i] = 0x00; // по дефолту он будет заполнен нулями
 
     for (int i = start_index; i < end_index + 1; ++ i) {
         buffer[countBit/8] = buffer[countBit/8] | ((result[i/8] & array_numbers[i%8])>0);
@@ -75,17 +101,41 @@ int read_message(FILE *stream, void *buf) {
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
-    int bufStart = 0;
-    uint8_t *uinBuf = (uint8_t*)buf;;
-    if (uinBuf!=NULL) {
-        for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
-            if (uinBuf[i]==0) {
-                bufStart = i;
+    if (count_end_marker > 1) {
+        countReverseMarker = 0;
+        start_index = end_index + 17;
+        uint16_t pair = (uint16_t)(result[mSize-2]<<8) | (uint16_t)(result[mSize-1]);
+        for (int i = 0; i < 8; ++ i) { // прверяем последний 
+            if ((uint8_t)(pair>>i) == 0x7E) {
+                end_index = mSize*8 - i - 8 - 1;
                 break;
+            }
+            countReverseMarker ++;
+            if (countReverseMarker == 8) {
+                fprintf(stderr, "Error, end-marker is not there");
+                return EOF;
+            }
+        }
+        for (int i = start_index; i < end_index + 1; ++ i) {
+            buffer[countBit/8] = buffer[countBit/8] | ((result[i/8] & array_numbers[i%8])>0);
+            if ((countBit%8)!=7) 
+                buffer[countBit/8] = buffer[countBit/8] << 1;
+    
+            countBit ++;
+            countBite1 = (result[i/8] & array_numbers[i%8]) ? countBite1+1: 0;
+            if (countBite1 == 5) {
+                i ++;
+                if (result[i/8] & array_numbers[i%8]) {
+                    fprintf(stderr, "The error is related to the payload");
+                    return EOF;
+                }
+                countBite1 = 0;
             }
         }
     }
-    for (int i = bufStart; i < MAX_LEN_MESSAGE; ++ i) {
+    int bufStart = 0;
+    uint8_t *uinBuf = (uint8_t*)buf;;
+    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
         uinBuf[i] = buffer[i];
     }
     return countBit/8;
