@@ -94,12 +94,13 @@ int read_message(FILE *stream, void *buf) {
         }
     }
     countBit --;
+    printf("countendmarker=%d\n", count_end_marker);
     printf("countBit=%d\n",countBit);
-    /*if ( (countBit % 8) != 0 )  {
+    if ( (countBit % 8) != 0 )  {
         puts("94");
         fprintf(stderr, "The byte is not whole");
         return EOF;
-    }*/
+    }
     if (count_end_marker > 1) {
         countReverseMarker = 0;
         start_index = end_index + 17;
@@ -133,15 +134,15 @@ int read_message(FILE *stream, void *buf) {
                 countBite1 = 0;
             }
         }
+        countBit --;
     }
-    countBit --;
     if ( (countBit % 8) != 0 )  {
-        puts("94");
+        puts("139");
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
     uint8_t *uinBuf = (uint8_t*)buf;
-    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) {
+    for (int i = 0; i < countBit/8; ++ i) {
         uinBuf[i] = buffer[i];
     }
     return countBit/8;
