@@ -14,7 +14,9 @@ int read_message(FILE *stream, void *buf) {
         result[i] = (uint8_t)byte;
         mSize ++;
     }
-    int end_index;
+    int end_index = 0;
+    for (int i = 0; i < MAX_LEN_MESSAGE; ++ i) printf("%x ",result[i]);
+    puts("result end");
     int start_index;
     int array_numbers[] = {128,64,32,16,8,4,2,1};
     int countBite1 = 0;
@@ -92,10 +94,11 @@ int read_message(FILE *stream, void *buf) {
         }
     }
     countBit --;
-    if ( (countBit % 8) != 0 )  {
+    printf("countBit=%d\n",count_bit);
+    /*if ( (countBit % 8) != 0 )  {
         puts("94");
         fprintf(stderr, "The byte is not whole");
-        return EOF;
+        return EOF;*/
     }
     if (count_end_marker > 1) {
         countReverseMarker = 0;
