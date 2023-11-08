@@ -98,8 +98,8 @@ int read_message(FILE *stream, void *buf) {
     /*if ( (countBit % 8) != 0 )  {
         puts("94");
         fprintf(stderr, "The byte is not whole");
-        return EOF;*/
-    }
+        return EOF;
+    }*/
     if (count_end_marker > 1) {
         countReverseMarker = 0;
         start_index = end_index + 17;
