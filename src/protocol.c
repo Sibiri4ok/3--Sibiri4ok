@@ -25,17 +25,6 @@ int read_message(FILE *stream, void *buf) {
     int countStartReverseMarker = 0;
     int count_end_marker = 0;
     
-    /*for (int i = 0; i < 8; ++ i) { // прверяем последний 
-        if ((uint8_t)(pair>>i) == 0x7E) {
-            end_index = mSize*8 - i - 8;
-            break;
-        }
-        countReverseMarker++;
-    }
-    if (countReverseMarker == 8) {
-        fprintf(stderr, "Error, end-marker is not there");
-        return EOF;
-    }*/
     for (int i = 0; i < 2048; ++ i) { // проверка стартового маркера
         if (countStartReverseMarker%8==0) {
             pair_start = (uint16_t)(result[i/8]<<8) | (uint16_t)(result[(i/8)+1]);
@@ -45,6 +34,7 @@ int read_message(FILE *stream, void *buf) {
             break;
         }
         if ( !(((uint8_t)(pair_start >> 8)) & 128) ) {
+            puts("37");
             fprintf(stderr, "Error, end-marker is not there");
             return EOF;
         }
@@ -70,6 +60,7 @@ int read_message(FILE *stream, void *buf) {
         countReverseMarker++;
         }   
         if (countReverseMarker == 8) {
+            puts("64");
             fprintf(stderr, "Error, end-marker is not there");
             return EOF;
         }
@@ -91,6 +82,7 @@ int read_message(FILE *stream, void *buf) {
         if (countBite1 == 5) {
             i ++;
             if (result[i/8] & array_numbers[i%8]) {
+                puts("84");
                 fprintf(stderr, "The error is related to the payload");
                 return EOF;
             }
@@ -99,6 +91,7 @@ int read_message(FILE *stream, void *buf) {
     }
     countBit --;
     if ( (countBit % 8) != 0 )  {
+        puts("94");
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
@@ -113,6 +106,7 @@ int read_message(FILE *stream, void *buf) {
             }
             countReverseMarker ++;
             if (countReverseMarker == 8) {
+                puts("108");
                 fprintf(stderr, "Error, end-marker is not there");
                 return EOF;
             }
@@ -127,6 +121,7 @@ int read_message(FILE *stream, void *buf) {
             if (countBite1 == 5) {
                 i ++;
                 if (result[i/8] & array_numbers[i%8]) {
+                    puts("124");
                     fprintf(stderr, "The error is related to the payload");
                     return EOF;
                 }
