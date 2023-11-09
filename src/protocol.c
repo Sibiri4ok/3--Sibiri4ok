@@ -206,7 +206,7 @@ int write_message(FILE* stream, const void *buf, size_t nbyte) {
 
 
 
-// Online C compiler to run C program online
+/* Online C compiler to run C program online
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -323,4 +323,4 @@ int main() {
     }
     for (int i = 0 ; i < 256; ++ i) printf("%x ", buffer[i]);
     return 0;
-}
+}*/
