@@ -27,7 +27,7 @@ int read_message(FILE *stream, void *buf) {
     int countReverseMarker = 0;
     int countStartReverseMarker = 0;
     
-    for (int i = 0; i < 2048; ++ i) { // проверка стартового маркера
+    for (int i = 0; i < mSize * 8; ++ i) { // проверка стартового маркера
         if (countStartReverseMarker%8==0) {
             pair_start = (uint16_t)(result[i/8]<<8) | (uint16_t)(result[(i/8)+1]);
         }
@@ -56,7 +56,7 @@ int read_message(FILE *stream, void *buf) {
     }
     int count_end_marker = 1;
     uint8_t find_end_marker = 0x00;
-    for (int i = start_index; i < 2048; ++i) {
+    for (int i = start_index; i < mSize * 8; ++i) {
         find_end_marker = find_end_marker | ((result[i/8] & array_numbers[i%8])>0);
         if (find_end_marker == 0x7E) {
             printf("i=%d\n",i);
