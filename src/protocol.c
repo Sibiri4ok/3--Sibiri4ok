@@ -14,7 +14,7 @@ int read_message(FILE *stream, void *buf) {
         result[i] = (uint8_t)byte;
         mSize ++;
     }
-    for (int i = 0 ; i < MAX_LEN_MESSAGE; ++i) printf("%x ", result[i]);
+    //for (int i = 0 ; i < MAX_LEN_MESSAGE; ++i) printf("%x ", result[i]);
     int end_index;
     int start_index;
     int end2_index;
@@ -36,7 +36,7 @@ int read_message(FILE *stream, void *buf) {
             break;
         }
         if ( !(((uint8_t)(pair_start >> 8)) & 128) ) {
-            puts("37");
+            //puts("37");
             fprintf(stderr, "Error, end-marker is not there");
             return EOF;
         }
@@ -50,7 +50,7 @@ int read_message(FILE *stream, void *buf) {
         countReverseMarker++;
     }
     if (countReverseMarker == 8) {
-        puts("52");
+        //puts("52");
         fprintf(stderr, "Error, end-marker is not there");
         return EOF;
     }
@@ -59,7 +59,7 @@ int read_message(FILE *stream, void *buf) {
     for (int i = start_index; i < mSize * 8; ++i) {
         find_end_marker = find_end_marker | ((result[i/8] & array_numbers[i%8])>0);
         if (find_end_marker == 0x7E) {
-            printf("i=%d\n",i);
+            //printf("i=%d\n",i);
             find_end_marker = find_end_marker << 8;
             end_index = (end_index==0) ? i-8+1 : end_index;
             count_end_marker++;
@@ -70,7 +70,7 @@ int read_message(FILE *stream, void *buf) {
                 int cnt = i + 1 + (7 - (i%8));
                 for (int j = i + 1; j < cnt; ++j) {
                     if ((result[j/8] & array_numbers[j%8])==0) {
-                        puts("72");
+                        //puts("72");
                         fprintf(stderr, "Error, end-marker is not there");
                         return EOF;
                     }
@@ -84,7 +84,7 @@ int read_message(FILE *stream, void *buf) {
         fprintf(stderr, "Error, end-marker is not there");
         return EOF;
     }
-    printf("start1=%d, start2=%d,start3=%d,start4=%d",start_index,end_index,start2_index,end2_index);
+    //printf("start1=%d, start2=%d,start3=%d,start4=%d",start_index,end_index,start2_index,end2_index);
 
 
     int countBit = 0;
@@ -102,17 +102,17 @@ int read_message(FILE *stream, void *buf) {
         if (countBite1 == 5) {
             i ++;
             if (result[i/8] & array_numbers[i%8]) {
-                puts("84");
+                //puts("84");
                 fprintf(stderr, "The error is related to the payload");
                 return EOF;
             }
             countBite1 = 0;
         }
     }
-    printf("countendmarker=%d\n", count_end_marker);
-    printf("countBit=%d\n",countBit);
+    //printf("countendmarker=%d\n", count_end_marker);
+    //printf("countBit=%d\n",countBit);
     if ( (countBit % 8) != 0 )  {
-        puts("94");
+        //puts("94");
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
@@ -135,7 +135,7 @@ int read_message(FILE *stream, void *buf) {
         }
     }
     if ( (countBit % 8) != 0 )  {
-        puts("139");
+        //puts("139");
         fprintf(stderr, "The byte is not whole");
         return EOF;
     }
