@@ -14,6 +14,7 @@ int read_message(FILE *stream, void *buf) {
         result[i] = (uint8_t)byte;
         mSize ++;
     }
+    for (int i = 0 ; i < MAX_LEN_MESSAGE; ++i) printf("%x ", result[i]);
     int end_index;
     int start_index;
     int end2_index;
@@ -49,6 +50,7 @@ int read_message(FILE *stream, void *buf) {
         countReverseMarker++;
     }
     if (countReverseMarker == 8) {
+        puts("52");
         fprintf(stderr, "Error, end-marker is not there");
         return EOF;
     }
@@ -67,10 +69,11 @@ int read_message(FILE *stream, void *buf) {
             if (count_end_marker%2==0) {
                 int cnt = i + 1 + (7 - (i%8));
                 for (int j = i + 1; j < cnt; ++j) {
-                     if ((result[j/8] & array_numbers[j%8])==0) {
-                         fprintf(stderr, "Error, end-marker is not there");
-                         return EOF;
-                     }
+                    if ((result[j/8] & array_numbers[j%8])==0) {
+                        puts("72");
+                        fprintf(stderr, "Error, end-marker is not there");
+                        return EOF;
+                    }
                 }
                 
             }
